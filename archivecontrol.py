@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import redis
 import sys
 import json
@@ -77,5 +79,30 @@ elif sys.argv[1] == 'force_requeue_job':
 
     print('Forced requeue of job {}'.format(job_id))
     exit(0)
+
+else:
+    print('archivecontrol.py: the ArchiveBot redis queue admin command')
+    print('')
+    print('Commands:')
+    print('')
+    print('unregister_pipeline pipeline:b1d2c895f46fe4d7794db61fac8083f0')
+    print('    Remove the pipeline\'s queues as though it had stopped')
+    print('    gracefully.  Only use this on dead pipelines.')
+    print('')
+    print('get_settings 2pe9q4h48btxwgmm7fqs6dqhx')
+    print('    Get the entire JSON document describing the job out of redis')
+    print('')
+    print('get_all_pending_queues')
+    print('    Fetch the names of all queues from which new jobs come')
+    print('')
+    print('dump_working_queue')
+    print('    Print the job IDs we think are currently active')
+    print('')
+    print('force_requeue_job 2pe9q4h48btxwgmm7fqs6dqhx')
+    print('    Make it appear as though the job was just queued so that an')
+    print('    available pipeline begins working on it.  Do not use this')
+    print('    unless the job is stuck and aborting it is impossible; it can')
+    print('    have unexpected consequences!')
+    exit(1)
 
 # vim:ts=4:sw=4:et:tw=78
