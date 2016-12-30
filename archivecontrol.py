@@ -72,7 +72,11 @@ elif sys.argv[1] == 'force_requeue_job':
         print('Redis does not have a log key for that job (maybe it does not exist)')
         exit(1)
 
-    # expire queues associated with the job and otherwise mimic the pipeline having marked it done
+    # reset the job's counters, remove the pipeline, and have another pipeline
+    # take it up
+    redis.hset(job_id, 'bytes_downloaded', 0)
+    redis.hset(job_id, 'items_downloaded', 0)
+    redis.hset(job_id, 'items_queued', 0)
     redis.hset(job_id, 'pipeline_id', None)
     redis.publish(log_channel, job_id)
     redis.lpush('pending', job_id)
