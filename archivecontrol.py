@@ -74,6 +74,7 @@ elif sys.argv[1] == 'force_requeue_job':
 
     # reset the job's counters, remove the pipeline, and have another pipeline
     # take it up
+    redis.lrem('working', 1, job_id)
     redis.hset(job_id, 'bytes_downloaded', 0)
     redis.hset(job_id, 'items_downloaded', 0)
     redis.hset(job_id, 'items_queued', 0)
