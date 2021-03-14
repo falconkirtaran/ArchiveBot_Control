@@ -59,6 +59,34 @@ elif sys.argv[1] == 'dump_working_queue':
     pprint('{}'.format(redis.lrange('working', 0, -1)))
     exit(0)
 
+elif sys.argv[1] == 'reset_job_counters':
+    if len(sys.argv) < 3:
+        print('Invalid arguments')
+        exit(1)
+
+    job_id = sys.argv[2]
+
+    # fetch required job parameter; bail if not found
+    data = redis.hgetall(job_id)
+    if 'log_key' not in data:
+        print('Redis does not have a log key for that job (maybe it does not exist)')
+        exit(1)
+
+    # reset the job's counters, remove the pipeline, and have another pipeline
+    # take it up
+    redis.hset(job_id, 'bytes_downloaded', 0)
+    redis.hset(job_id, 'items_downloaded', 0)
+    redis.hset(job_id, 'items_queued', 0)
+    redis.hset(job_id, 'r1xx', 0)
+    redis.hset(job_id, 'r2xx', 0)
+    redis.hset(job_id, 'r3xx', 0)
+    redis.hset(job_id, 'r4xx', 0)
+    redis.hset(job_id, 'r5xx', 0)
+    redis.hset(job_id, 'runk', 0)
+
+    print('Reset counters for job {}'.format(job_id))
+    exit(0)
+
 elif sys.argv[1] == 'force_requeue_job':
     if len(sys.argv) < 3:
         print('Invalid arguments')
